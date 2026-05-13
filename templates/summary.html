@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Summary - FinTrackr{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Financial Summary</h1>
+</div>
+
+<div class="dashboard-section">
+    <div class="section-header">
+        <h2>Spending by Category</h2>
+
+        <form action="{{ url_for('summary') }}" method="GET" class="account-selector">
+            <select name="account_id" onchange="this.form.submit()" class="form-input-sm">
+                {% for account in accounts %}
+                <option value="{{ account.account_id }}" {% if selected_account_id==account.account_id %}selected{%
+                    endif %}>
+                    {{ account.account_name }}
+                </option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+
+    {% if chart_data.data %}
+    <div class="chart-container"
+        style="position: relative; height: 400px; width: 100%; max-width: 600px; margin: 0 auto;">
+        <canvas id="spendingChart"></canvas>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">📊</div>
+        <h3>No Data Available</h3>
+        <p>No expense transactions found for this account.</p>
+    </div>
+    {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    {% if chart_data.data %}
+    const ctx = document.getElementById('spendingChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ chart_data.labels | tojson }},
+        datasets: [{
+            data: {{ chart_data.data | tojson }},
+        backgroundColor: {{ chart_data.colors | tojson }},
+        borderWidth: 0,
+        hoverOffset: 4
+            }]
+        },
+        options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'bottom',
+                labels: {
+                    color: '#cbd5e1',
+                    padding: 20,
+                    font: {
+                        family: "'Inter', sans-serif",
+                        size: 12
+                    }
+                }
+            },
+            tooltip: {
+                backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                titleColor: '#f1f5f9',
+                bodyColor: '#cbd5e1',
+                padding: 12,
+                cornerRadius: 8,
+                callbacks: {
+                    label: function (context) {
+                        let label = context.label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        if (context.parsed !== null) {
+                            label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed);
+                        }
+                        return label;
+                    }
+                }
+            }
+        },
+        cutout: '60%'
+    }
+    });
+    {% endif %}
+</script>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Add Category - FinTrackr{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Add New Category</h1>
+</div>
+
+<div class="form-container">
+    <form method="POST" action="{{ url_for('add_category') }}" class="form-card">
+        <div class="form-group">
+            <label for="category_name">Category Name *</label>
+            <input type="text" id="category_name" name="category_name" required class="form-input"
+                placeholder="e.g., Groceries, Transportation">
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Add Category</button>
+            <a href="{{ url_for('categories') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

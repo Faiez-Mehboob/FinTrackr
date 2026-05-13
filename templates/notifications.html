@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Notifications - FinTrackr{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Notifications</h1>
+    <a href="{{ url_for('mark_all_notifications_read') }}" class="btn btn-primary">Mark All as Read</a>
+</div>
+
+<div class="notifications-container">
+    {% if notifications %}
+    {% for notification in notifications %}
+    <div
+        class="notification-card {% if notification.is_read %}notification-read{% endif %} notification-{{ notification.notification_type|lower }}">
+        <div class="notification-header">
+            <div
+                class="notification-type-badge badge badge-{{ 'warning' if notification.notification_type == 'Reminder' else 'danger' }}">
+                {% if notification.notification_type == 'Reminder' %}
+                ⚠️ {{ notification.notification_type }}
+                {% else %}
+                🚨 {{ notification.notification_type }}
+                {% endif %}
+            </div>
+            <span class="notification-time">{{ notification.notification_date }}</span>
+        </div>
+        <p class="notification-text">{{ notification.message }}</p>
+        {% if not notification.is_read %}
+        <div class="notification-actions">
+            <a href="{{ url_for('mark_notification_read', notification_id=notification.notification_id) }}"
+                class="btn btn-sm btn-secondary">Mark as Read</a>
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="empty-state-large">
+        <div class="empty-icon">🔔</div>
+        <h2>No Notifications</h2>
+        <p>You're all caught up! No notifications to display.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

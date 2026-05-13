@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Account - FinTrackr{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Edit Account</h1>
+</div>
+
+<div class="form-container">
+    <form method="POST" action="{{ url_for('edit_account', account_id=account.account_id) }}" class="form-card">
+        <div class="form-group">
+            <label for="account_name">Account Name *</label>
+            <input type="text" id="account_name" name="account_name" value="{{ account.account_name }}" required
+                class="form-input">
+        </div>
+
+        <div class="form-group">
+            <label for="account_type">Account Type *</label>
+            <select id="account_type" name="account_type" required class="form-input">
+                <option value="Checking" {% if account.account_type=='Checking' %}selected{% endif %}>Checking</option>
+                <option value="Savings" {% if account.account_type=='Savings' %}selected{% endif %}>Savings</option>
+                <option value="Credit Card" {% if account.account_type=='Credit Card' %}selected{% endif %}>Credit Card
+                </option>
+                <option value="Cash" {% if account.account_type=='Cash' %}selected{% endif %}>Cash</option>
+                <option value="Investment" {% if account.account_type=='Investment' %}selected{% endif %}>Investment
+                </option>
+                <option value="Other" {% if account.account_type=='Other' %}selected{% endif %}>Other</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="balance">Balance *</label>
+            <input type="number" id="balance" name="balance" step="0.01" value="{{ account.balance }}" required
+                class="form-input">
+        </div>
+
+        <div class="form-group">
+            <label for="currency">Currency</label>
+            <select id="currency" name="currency" class="form-input">
+                <option value="USD" {% if account.currency=='USD' %}selected{% endif %}>USD - US Dollar</option>
+                <option value="EUR" {% if account.currency=='EUR' %}selected{% endif %}>EUR - Euro</option>
+                <option value="GBP" {% if account.currency=='GBP' %}selected{% endif %}>GBP - British Pound</option>
+                <option value="PKR" {% if account.currency=='PKR' %}selected{% endif %}>PKR - Pakistani Rupee</option>
+                <option value="INR" {% if account.currency=='INR' %}selected{% endif %}>INR - Indian Rupee</option>
+            </select>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Update Account</button>
+            <a href="{{ url_for('accounts') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

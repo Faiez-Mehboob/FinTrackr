@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - FinTrackr{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="dashboard-header">
+        <h1>Financial Dashboard</h1>
+        <p>Overview of your financial status</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">💵</div>
+            <div class="stat-content">
+                <h3>Total Balance</h3>
+                <p class="stat-value">${{ "%.2f"|format(total_balance) }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">🏦</div>
+            <div class="stat-content">
+                <h3>Accounts</h3>
+                <p class="stat-value">{{ account_count }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-content">
+                <h3>Monthly Budget</h3>
+                <p class="stat-value">${{ "%.2f"|format(current_budget) }}</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon">💸</div>
+            <div class="stat-content">
+                <h3>This Month Spending</h3>
+                <p class="stat-value {{ 'expense' if current_spending > current_budget else '' }}">${{
+                    "%.2f"|format(current_spending) }}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- Notifications Section -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2>📢 Notifications</h2>
+                <a href="{{ url_for('notifications') }}" class="btn btn-sm" style="color: #93a1a1;">View All</a>
+            </div>
+            <div class="notifications-list">
+                {% if notifications %}
+                {% for notification in notifications %}
+                <div class="notification-item notification-{{ notification.notification_type|lower }}">
+                    <div class="notification-icon">
+                        {% if notification.notification_type == 'Reminder' %}
+                        ⚠️
+                        {% else %}
+                        🚨
+                        {% endif %}
+                    </div>
+                    <div class="notification-content">
+                        <span class="notification-type">{{ notification.notification_type }}</span>
+                        <p class="notification-message">{{ notification.message }}</p>
+                        <span class="notification-date">{{ notification.notification_date }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p class="empty-state">No new notifications. You're all caught up! 🎉</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Recent Transactions -->
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2>Recent Transactions</h2>
+                <a href="{{ url_for('transactions') }}" class="btn btn-sm" style="color: #93a1a1;">View All</a>
+            </div>
+            <div class="transaction-list">
+                {% if recent_transactions %}
+                {% for transaction in recent_transactions %}
+                <div class="transaction-item">
+                    <div class="transaction-info">
+                        <span class="transaction-category">{{ transaction.category_name if transaction.category_name
+                            else 'Income' }}</span>
+                        <span class="transaction-account">{{ transaction.account_name }}</span>
+                        <span class="transaction-date">{{ transaction.tx_date }}</span>
+                    </div>
+                    <div class="transaction-amount {{ 'income' if transaction.tx_type == 'Income' else 'expense' }}">
+                        {{ '+' if transaction.tx_type == 'Income' else '-' }}${{ "%.2f"|format(transaction.amount) }}
+                    </div>
+                </div>
+                {% endfor %}
+                {% else %}
+                <p class="empty-state">No transactions yet. <a href="{{ url_for('add_transaction') }}">Add your first
+                        transaction</a></p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Budget Progress -->
+        {% if current_budget > 0 %}
+        <div class="dashboard-section">
+            <div class="section-header">
+                <h2>Monthly Budget Progress</h2>
+                <a href="{{ url_for('budgets') }}" class="btn btn-sm" style="color: #93a1a1;">Manage</a>
+            </div>
+            <div class="budget-progress">
+                <div class="budget-header">
+                    <span class="budget-label">Spent</span>
+                    <span class="budget-amount">${{ "%.2f"|format(current_spending) }} / ${{
+                        "%.2f"|format(current_budget) }}</span>
+                </div>
+                <div class="progress-bar">
+                    {% set percentage = (current_spending / current_budget * 100)|round if current_budget > 0 else 0 %}
+                    <div class="progress-fill {% if percentage >= 100 %}progress-over{% elif percentage >= 80 %}progress-warning{% endif %}"
+                        style="width: {{ percentage if percentage <= 100 else 100 }}%"></div>
+                </div>
+                <p class="progress-percentage">{{ percentage }}% of budget used</p>
+                {% if percentage >= 100 %}
+                <p class="budget-warning">⚠️ You have exceeded your budget!</p>
+                {% elif percentage >= 80 %}
+                <p class="budget-warning">⚠️ You're approaching your budget limit!</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

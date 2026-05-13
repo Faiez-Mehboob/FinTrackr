@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Add Account - FinTrackr{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Add New Account</h1>
+</div>
+
+<div class="form-container">
+    <form method="POST" action="{{ url_for('add_account') }}" class="form-card">
+        <div class="form-group">
+            <label for="account_name">Account Name *</label>
+            <input type="text" id="account_name" name="account_name" required class="form-input"
+                placeholder="e.g., Main Checking">
+        </div>
+
+        <div class="form-group">
+            <label for="account_type">Account Type *</label>
+            <select id="account_type" name="account_type" required class="form-input">
+                <option value="">Select account type</option>
+                <option value="Bank">Bank</option>
+                <option value="E-Wallet">E-Wallet</option>
+                <option value="Cash">Cash</option>
+                <option value="Investment">Investment</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="balance">Initial Balance *</label>
+            <input type="number" id="balance" name="balance" step="0.01" required class="form-input" placeholder="0.00">
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Add Account</button>
+            <a href="{{ url_for('accounts') }}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
