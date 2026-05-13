@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
-from database import get_db_connection, hash_password, init_db
+from database import get_db_connection, hash_password, init_db, verify_password
 from datetime import datetime
 import os
 import calendar
@@ -118,16 +118,14 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        password_hash = hash_password(password)
         
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM User WHERE username = ? AND password_hash = ?', 
-                      (username, password_hash))
+        cursor.execute('SELECT * FROM User WHERE username = ?', (username,))
         user = cursor.fetchone()
         conn.close()
         
-        if user:
+        if user and verify_password(password, user['password_hash']):  
             session['user_id'] = user['user_id']
             session['username'] = user['username']
             flash('Login successful!', 'success')

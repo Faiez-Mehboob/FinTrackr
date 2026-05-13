@@ -1,6 +1,7 @@
 import sqlite3
 import hashlib
 from datetime import datetime
+import bcrypt
 
 DATABASE = 'fintrackr.db'
 
@@ -10,7 +11,10 @@ def get_db_connection():
     return conn
 
 def hash_password(password):
-    return hashlib.sha256(password.encode()).hexdigest()
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+def verify_password(password, password_hash):
+    return bcrypt.checkpw(password.encode('utf-8'), password_hash.encode('utf-8'))
 
 def init_db():
     conn = get_db_connection()
