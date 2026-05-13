@@ -706,5 +706,15 @@ def summary():
                          selected_account_id=int(selected_account_id) if selected_account_id else None,
                          chart_data=chart_data)
 
+@app.errorhandler(500)
+def internal_error(error):
+    flash('An error occurred. Please try again.', 'error')
+    return redirect(url_for('dashboard'))
+
+@app.errorhandler(404)
+def not_found(error):
+    flash('Page not found', 'error')
+    return redirect(url_for('dashboard'))
+
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=False)
