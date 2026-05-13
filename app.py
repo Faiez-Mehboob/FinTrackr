@@ -6,9 +6,11 @@ import calendar
 import csv
 import io
 from flask import Response, jsonify
+import secrets
 
 app = Flask(__name__)
-app.secret_key = 'secret-key'
+app.secret_key = secrets.token_hex(32) 
+app.config['SESSION_COOKIE_HTTPONLY'] = True
 
 if not os.path.exists('fintrackr.db'):
     init_db()
