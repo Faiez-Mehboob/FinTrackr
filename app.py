@@ -717,4 +717,4 @@ def not_found(error):
     return redirect(url_for('dashboard'))
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(ssl_context='adhoc', debug=False)
